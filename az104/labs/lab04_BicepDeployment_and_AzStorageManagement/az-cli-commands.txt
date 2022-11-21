@@ -1,0 +1,42 @@
+0.Creación de VM . Espacio limpio para laboratorio
+
+az vm create --resource-group 'pro-westeur-storages' --name 'CMPWS22P001' --image 'Win22DataCenter' --public-ip-sku 'Standard' --admin-username 'dordo' --admin--password
+
+1. Creación de la cuenta de almacenamiento
+az storage account create --resource-group 'pro-westeur-storages' --name 'stgblobp001' --location 'westeurope' --kind StorageV2 --sku Standard_LRS
+
+2. Creación del contenedor blob
+az storage blob create --name 'blobContainerName' --account-name 'storageAccountname' --public-access blob
+
+3. Generación de la SAS
+az storage container generate-sas --account-name 'storageAccountName' --name 'blobContainername' --permissions 'acdlrw' --expiry 'yyyy-MM-dd' --auth-mode login --as-username
+
+  # Cada letra dentro del parametro permissions concede un permiso adicional
+  # el parametro '--auth-mode' hace referencia al usuario que está lanzando el comando desde la CLI, por lo que este debe tener al menos el rol de 'contributor'
+  # El parametro '--as-username' hace referencia a que la clave SAS actuara en nombre del usuario loggeado
+
+4. Instalación de AZCopy e incluir ruta del exe en path de powershell
+$userEnv = [System.environment]::GetEnvironmentVariable("Path","User")
+[System.Environment]::SetEnvironmentVariable("PATH", $userEnv + ";C:\Program Files\azcopy_windows_amd64_10.16.2", "User")
+
+5. Generación de ficheros aleatorios mediante PowerShell
+<#
+$i = 1
+1..500 | % {
+>> $Guid1 = New-Guid
+>> $Guid2 = New-Guid
+>> $defGuid = "$($Guid1)-$($Guid2)"
+>> $rand = [int](Get-Date -UFormat %s -Millisecond 0)
+>> $tmpPath = "$($rand)_$(Get-Random -Maximum 999)_file.txt"
+>> Set-Content -Path ".\$tmpPath" -Value $defGuid
+>> Write-Host "$i - Name: $tmpPath"
+>> $i++}
+#>
+
+6. Subida de ficheros mediante AZCopy
+azcopy <Local_path_File> <Blob_Storage_url><SAS_token>
+
+  # A la hora de generar el SAS token, desde el portal de Azure, tener en cuenta que al generarlo, se ha conseguido realizar la subida con el SAS tipo "Account Key" y otorgando todos los permissions
+
+  #Ejemplo de enlace completo para subir al blob
+  https://stgblobp001.blob.core.windows.net/lab04blobs01?sp=r&st=2022-11-21T14:37:24Z&se=2022-11-21T22:37:24Z&spr=https&sv=2021-06-08&sr=c&sig=FstjsNDRTDkcMpH5n7xeAr5nUdC3bo19DUCZw%2BBOEbU%3D
