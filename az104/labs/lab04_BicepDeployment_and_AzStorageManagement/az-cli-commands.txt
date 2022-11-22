@@ -39,4 +39,8 @@ azcopy <Local_path_File> <Blob_Storage_url><SAS_token>
   # A la hora de generar el SAS token, desde el portal de Azure, tener en cuenta que al generarlo, se ha conseguido realizar la subida con el SAS tipo "Account Key" y otorgando todos los permissions
 
   #Ejemplo de enlace completo para subir al blob
-  https://stgblobp001.blob.core.windows.net/lab04blobs01?sp=r&st=2022-11-21T14:37:24Z&se=2022-11-21T22:37:24Z&spr=https&sv=2021-06-08&sr=c&sig=FstjsNDRTDkcMpH5n7xeAr5nUdC3bo19DUCZw%2BBOEbU%3D
+  https://stgblobp001.blob.core.windows.net/lab04blobs01?
+
+
+7. Eliminar todos los recursos creados en esta practica
+Eliminación a través del portal
